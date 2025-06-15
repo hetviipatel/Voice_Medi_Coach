@@ -32,7 +32,7 @@ Follow these simple steps to set up and run the Voice Medication Coach applicati
 1.  **Clone the Repository**:
     Open your terminal or command prompt and clone the project repository using Git:
     ```bash
-    git clone [repository_url] # Replace [repository_url] with the actual URL of your project
+    git clone https://github.com/hetviipatel/Voice_Medi_Coach.git
     ```
 2.  **Navigate to the Project Directory**:
     Change your current directory to the cloned project folder:
