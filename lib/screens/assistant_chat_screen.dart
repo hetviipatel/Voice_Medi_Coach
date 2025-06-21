@@ -129,8 +129,12 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: null,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: colorScheme.primary),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.menu, color: colorScheme.primary),
