@@ -116,20 +116,19 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Scaffold(
       appBar: AppBar(
         title: Text(
           widget.medication == null ? 'Add New Medication' : 'Edit Medication',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.blue.shade800,
-          ),
+          style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.primary),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.blueAccent),
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF42A5F5)),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -137,6 +136,14 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Card(
+            elevation: 12,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 36.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -148,7 +155,7 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                 decoration: InputDecoration(
                   labelText: 'Medicine Name',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(16),
                   ),
                   prefixIcon: const Icon(Icons.local_pharmacy),
                 ),
@@ -168,7 +175,7 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                 decoration: InputDecoration(
                   labelText: 'Dosage',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(16),
                   ),
                   prefixIcon: const Icon(Icons.science),
                   suffixText: 'mg',
@@ -194,15 +201,16 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                       decoration: InputDecoration(
                         labelText: 'Frequency',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(16),
                         ),
                         prefixIcon: const Icon(Icons.repeat),
                       ),
-                      items: const [
-                        DropdownMenuItem(value: 'daily', child: Text('Daily')),
-                        DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                        DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
-                      ],
+                            items: ['daily', 'weekly', 'monthly']
+                                .map((type) => DropdownMenuItem(
+                                      value: type,
+                                      child: Text(type[0].toUpperCase() + type.substring(1)),
+                                    ))
+                                .toList(),
                       onChanged: (value) {
                         setState(() {
                           _frequencyType = value!;
@@ -210,194 +218,152 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  if (_frequencyType == 'daily')
+                        const SizedBox(width: 16),
                     Expanded(
-                      child: DropdownButtonFormField<int>(
-                        value: _timesPerDay,
+                          child: TextFormField(
+                            controller: _frequencyController,
+                            keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          labelText: 'Times per day',
+                              labelText: 'Times/Day',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              prefixIcon: const Icon(Icons.timelapse),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Enter times per day';
+                              }
+                              if (int.tryParse(value) == null) {
+                                return 'Enter a valid number';
+                              }
+                              return null;
+                            },
                           ),
                         ),
-                        items: List.generate(4, (index) => index + 1)
-                            .map((value) => DropdownMenuItem(
-                                  value: value,
-                                  child: Text('$value'),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _timesPerDay = value!;
-                            if (_reminderTimes.length < value) {
-                              _reminderTimes.addAll(
-                                List.generate(
-                                  value - _reminderTimes.length,
-                                  (index) => const TimeOfDay(hour: 8, minute: 0),
-                                ),
-                              );
-                            } else if (_reminderTimes.length > value) {
-                              _reminderTimes.removeRange(value, _reminderTimes.length);
-                            }
-                          });
-                        },
-                      ),
+                      ],
                     ),
-                ],
-              ),
-              const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-              // Start Date
-              ListTile(
-                title: Text(
-                  'Start Date',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                subtitle: Text(
-                  _startDate != null
-                      ? DateFormat('MMM dd, yyyy').format(_startDate!)
-                      : 'Select start date',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                trailing: const Icon(Icons.calendar_today),
-                onTap: () => _selectDate(context, true),
-              ),
-              const SizedBox(height: 10),
-
-              // End Date
-              ListTile(
-                title: Text(
-                  'End Date (Optional)',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                subtitle: Text(
-                  _endDate != null
-                      ? DateFormat('MMM dd, yyyy').format(_endDate!)
-                      : 'Select end date',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                trailing: const Icon(Icons.calendar_today),
-                onTap: () => _selectDate(context, false),
+                    // Start and End Dates
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _selectDate(context, true),
+                            child: AbsorbPointer(
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Start Date',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  prefixIcon: const Icon(Icons.calendar_today),
+                                ),
+                                controller: TextEditingController(
+                                  text: _startDate != null ? DateFormat('yyyy-MM-dd').format(_startDate!) : '',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _selectDate(context, false),
+                            child: AbsorbPointer(
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'End Date',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  prefixIcon: const Icon(Icons.calendar_today),
+                                ),
+                                controller: TextEditingController(
+                                  text: _endDate != null ? DateFormat('yyyy-MM-dd').format(_endDate!) : '',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
               ),
               const SizedBox(height: 20),
 
               // Reminder Times
               Text(
                 'Reminder Times',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[700],
-                ),
+                      style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.primary),
               ),
               const SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _reminderTimes.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                      'Reminder ${index + 1}',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    subtitle: Text(
-                      _reminderTimes[index].format(context),
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.access_time),
-                          onPressed: () => _selectTime(context, index),
-                        ),
+                    ..._reminderTimes.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      TimeOfDay time = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => _selectTime(context, index),
+                                child: AbsorbPointer(
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Time',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      prefixIcon: const Icon(Icons.access_time),
+                                    ),
+                                    controller: TextEditingController(
+                                      text: time.format(context),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
                         if (_reminderTimes.length > 1)
                           IconButton(
-                            icon: const Icon(Icons.delete_outline),
+                                icon: Icon(Icons.remove_circle, color: colorScheme.error),
                             onPressed: () => _removeReminderTime(index),
                           ),
                       ],
                     ),
                   );
-                },
-              ),
-              if (_reminderTimes.length < 4)
-                TextButton.icon(
+                    }).toList(),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
                   onPressed: _addReminderTime,
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Reminder Time'),
-                ),
-              const SizedBox(height: 20),
-
-              // Status
-              DropdownButtonFormField<String>(
-                value: _status,
-                decoration: InputDecoration(
-                  labelText: 'Status',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  prefixIcon: const Icon(Icons.info_outline),
-                ),
-                items: <String>['Taken', 'Missed', 'Upcoming']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _status = newValue!;
-                  });
-                },
+                        icon: Icon(Icons.add, color: colorScheme.primary),
+                        label: Text('Add Time', style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary)),
+                      ),
               ),
               const SizedBox(height: 30),
-
-              // Save Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton.icon(
+                      height: 50,
+                      child: ElevatedButton(
                   onPressed: _saveMedication,
-                  icon: const Icon(Icons.save),
-                  label: Text(
-                    widget.medication == null ? 'Add Medication' : 'Save Changes',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    backgroundColor: Colors.blueAccent,
-                    foregroundColor: Colors.white,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: Text(
+                          widget.medication == null ? 'Add Medication' : 'Save Changes',
+                          style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
             ],
+                ),
+              ),
+            ),
           ),
         ),
       ),

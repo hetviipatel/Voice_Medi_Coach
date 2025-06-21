@@ -32,63 +32,71 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         title: Text(
           'Settings',
-          style: textTheme.headlineSmall?.copyWith(color: colorScheme.onSurface),
+          style: textTheme.headlineSmall?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSurfaceVariant),
+          icon: Icon(Icons.arrow_back_ios, color: colorScheme.primary),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Theme Settings Section
             _buildSectionHeader('Theme Settings', Icons.brightness_6, colorScheme.tertiary, context),
             const SizedBox(height: 12),
-            _buildCard(
-              context: context,
-              child: Column(
-                children: [
-                  RadioListTile<ThemeMode>(
-                    title: Text('System Default', style: textTheme.bodyMedium),
-                    value: ThemeMode.system,
-                    groupValue: widget.themeModeNotifier.value,
-                    onChanged: (ThemeMode? newValue) {
-                      if (newValue != null) {
-                        widget.themeModeNotifier.value = newValue;
-                      }
-                    },
-                    activeColor: colorScheme.primary,
-                  ),
-                  RadioListTile<ThemeMode>(
-                    title: Text('Light Mode', style: textTheme.bodyMedium),
-                    value: ThemeMode.light,
-                    groupValue: widget.themeModeNotifier.value,
-                    onChanged: (ThemeMode? newValue) {
-                      if (newValue != null) {
-                        widget.themeModeNotifier.value = newValue;
-                      }
-                    },
-                    activeColor: colorScheme.primary,
-                  ),
-                  RadioListTile<ThemeMode>(
-                    title: Text('Dark Mode', style: textTheme.bodyMedium),
-                    value: ThemeMode.dark,
-                    groupValue: widget.themeModeNotifier.value,
-                    onChanged: (ThemeMode? newValue) {
-                      if (newValue != null) {
-                        widget.themeModeNotifier.value = newValue;
-                      }
-                    },
-                    activeColor: colorScheme.primary,
-                  ),
-                ],
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              margin: EdgeInsets.zero,
+              color: colorScheme.surface,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    RadioListTile<ThemeMode>(
+                      title: Text('System Default', style: textTheme.bodyMedium),
+                      value: ThemeMode.system,
+                      groupValue: widget.themeModeNotifier.value,
+                      onChanged: (ThemeMode? newValue) {
+                        if (newValue != null) {
+                          widget.themeModeNotifier.value = newValue;
+                        }
+                      },
+                      activeColor: colorScheme.primary,
+                    ),
+                    RadioListTile<ThemeMode>(
+                      title: Text('Light Mode', style: textTheme.bodyMedium),
+                      value: ThemeMode.light,
+                      groupValue: widget.themeModeNotifier.value,
+                      onChanged: (ThemeMode? newValue) {
+                        if (newValue != null) {
+                          widget.themeModeNotifier.value = newValue;
+                        }
+                      },
+                      activeColor: colorScheme.primary,
+                    ),
+                    RadioListTile<ThemeMode>(
+                      title: Text('Dark Mode', style: textTheme.bodyMedium),
+                      value: ThemeMode.dark,
+                      groupValue: widget.themeModeNotifier.value,
+                      onChanged: (ThemeMode? newValue) {
+                        if (newValue != null) {
+                          widget.themeModeNotifier.value = newValue;
+                        }
+                      },
+                      activeColor: colorScheme.primary,
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -96,31 +104,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // Voice Settings Section
             _buildSectionHeader('Voice Settings', Icons.record_voice_over, colorScheme.primary, context),
             const SizedBox(height: 12),
-            _buildCard(
-              context: context,
-              child: Column(
-                children: [
-                  _buildSettingSlider(
-                    'STT Volume', _sttVolume, (value) => setState(() => _sttVolume = value),
-                    context,
-                    min: 0.0, max: 1.0, divisions: 10, label: _sttVolume.toStringAsFixed(1),
-                  ),
-                  _buildSettingSlider(
-                    'TTS Volume', _ttsVolume, (value) => setState(() => _ttsVolume = value),
-                    context,
-                    min: 0.0, max: 1.0, divisions: 10, label: _ttsVolume.toStringAsFixed(1),
-                  ),
-                  _buildSettingSlider(
-                    'STT Speed', _sttSpeed, (value) => setState(() => _sttSpeed = value),
-                    context,
-                    min: 0.5, max: 2.0, divisions: 15, label: _sttSpeed.toStringAsFixed(1),
-                  ),
-                  _buildSettingSlider(
-                    'TTS Speed', _ttsSpeed, (value) => setState(() => _ttsSpeed = value),
-                    context,
-                    min: 0.5, max: 2.0, divisions: 15, label: _ttsSpeed.toStringAsFixed(1),
-                  ),
-                ],
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              margin: EdgeInsets.zero,
+              color: colorScheme.surface,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    _buildSettingSlider(
+                      'STT Volume', _sttVolume, (value) => setState(() => _sttVolume = value),
+                      context,
+                      min: 0.0, max: 1.0, divisions: 10, label: _sttVolume.toStringAsFixed(1),
+                    ),
+                    _buildSettingSlider(
+                      'TTS Volume', _ttsVolume, (value) => setState(() => _ttsVolume = value),
+                      context,
+                      min: 0.0, max: 1.0, divisions: 10, label: _ttsVolume.toStringAsFixed(1),
+                    ),
+                    _buildSettingSlider(
+                      'STT Speed', _sttSpeed, (value) => setState(() => _sttSpeed = value),
+                      context,
+                      min: 0.5, max: 2.0, divisions: 15, label: _sttSpeed.toStringAsFixed(1),
+                    ),
+                    _buildSettingSlider(
+                      'TTS Speed', _ttsSpeed, (value) => setState(() => _ttsSpeed = value),
+                      context,
+                      min: 0.5, max: 2.0, divisions: 15, label: _ttsSpeed.toStringAsFixed(1),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -128,26 +144,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // Alert Settings Section
             _buildSectionHeader('Alert Settings', Icons.notifications_active, colorScheme.secondary, context),
             const SizedBox(height: 12),
-            _buildCard(
-              context: context,
-              child: Column(
-                children: [
-                  _buildSettingToggle(
-                    'Medication Reminders', _medicationReminders,
-                    (value) => setState(() => _medicationReminders = value),
-                    context,
-                  ),
-                  _buildSettingToggle(
-                    'Missed Dose Alerts', _missedDoseAlerts,
-                    (value) => setState(() => _missedDoseAlerts = value),
-                    context,
-                  ),
-                  _buildSettingToggle(
-                    'Side Effect Notifications', _sideEffectNotifications,
-                    (value) => setState(() => _sideEffectNotifications = value),
-                    context,
-                  ),
-                ],
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              margin: EdgeInsets.zero,
+              color: colorScheme.surface,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    _buildSettingToggle(
+                      'Medication Reminders', _medicationReminders,
+                      (value) => setState(() => _medicationReminders = value),
+                      context,
+                    ),
+                    _buildSettingToggle(
+                      'Missed Dose Alerts', _missedDoseAlerts,
+                      (value) => setState(() => _missedDoseAlerts = value),
+                      context,
+                    ),
+                    _buildSettingToggle(
+                      'Side Effect Notifications', _sideEffectNotifications,
+                      (value) => setState(() => _sideEffectNotifications = value),
+                      context,
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -155,32 +179,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // Export Logs Section
             _buildSectionHeader('Data Management', Icons.upload_file, colorScheme.tertiary, context),
             const SizedBox(height: 12),
-            _buildCard(
-              context: context,
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: Implement export logs as PDF
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Exporting logs as PDF...', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface))),
-                        );
-                      },
-                      icon: Icon(Icons.picture_as_pdf, color: colorScheme.onPrimary),
-                      label: Text(
-                        'Export Logs as PDF',
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colorScheme.onPrimary,
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              margin: EdgeInsets.zero,
+              color: colorScheme.surface,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // TODO: Implement export logs as PDF
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Exporting logs as PDF...', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface))),
+                          );
+                        },
+                        icon: Icon(Icons.picture_as_pdf, color: colorScheme.onPrimary),
+                        label: Text(
+                          'Export Logs as PDF',
+                          style: textTheme.labelLarge?.copyWith(
+                            color: colorScheme.onPrimary,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.tertiary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.tertiary,
-                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -188,8 +223,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // Delete Account Section
             _buildSectionHeader('Account Actions', Icons.delete_forever, colorScheme.error, context),
             const SizedBox(height: 12),
-            _buildCard(
-              context: context,
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              margin: EdgeInsets.zero,
+              color: colorScheme.surface,
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -206,11 +246,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.error,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -237,23 +279,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           style: textTheme.titleMedium,
         ),
       ],
-    );
-  }
-
-  Widget _buildCard({required Widget child, required BuildContext context}) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: colorScheme.outlineVariant),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: child,
-      ),
     );
   }
 

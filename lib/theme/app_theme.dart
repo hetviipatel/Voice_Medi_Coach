@@ -4,22 +4,19 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.blue,
-      brightness: Brightness.light,
-      primary: Colors.blue.shade700,
+    colorScheme: ColorScheme.light(
+      primary: Color(0xFF42A5F5),
       onPrimary: Colors.white,
-      secondary: Colors.blueAccent.shade100,
+      secondary: Color(0xFF90CAF9),
       onSecondary: Colors.black,
-      tertiary: Colors.purple.shade400,
-      onTertiary: Colors.white,
-      error: Colors.red.shade400,
-      onError: Colors.white,
-      background: Colors.grey.shade50,
+      background: Colors.white,
       onBackground: Colors.black,
       surface: Colors.white,
       onSurface: Colors.black,
+      error: Colors.red.shade400,
+      onError: Colors.white,
     ),
+    scaffoldBackgroundColor: Colors.white,
     textTheme: GoogleFonts.poppinsTextTheme(
       ThemeData.light().textTheme,
     ),
@@ -27,74 +24,91 @@ class AppTheme {
       backgroundColor: Colors.white,
       elevation: 0,
       titleTextStyle: GoogleFonts.poppins(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
         color: Colors.black87,
       ),
-      iconTheme: const IconThemeData(color: Colors.blueAccent),
+      iconTheme: const IconThemeData(color: Color(0xFF42A5F5)),
     ),
     cardTheme: CardTheme(
-      elevation: 0,
+      elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(24),
       ),
+      color: Colors.white,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       surfaceTintColor: Colors.transparent,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(24),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        foregroundColor: Colors.white, // Default text color for ElevatedButton
+        backgroundColor: Color(0xFF42A5F5),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        elevation: 2,
       ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Color(0xFF42A5F5),
+        side: const BorderSide(color: Color(0xFF42A5F5), width: 2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        padding: const EdgeInsets.symmetric(vertical: 18),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: Color(0xFF42A5F5), width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: Color(0xFF90CAF9), width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: Color(0xFF42A5F5), width: 2),
+      ),
+      labelStyle: GoogleFonts.poppins(color: Colors.grey[700]),
+      hintStyle: GoogleFonts.poppins(color: Colors.grey[400]),
+      prefixIconColor: Color(0xFF42A5F5),
+      contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: Colors.blueAccent,
+        foregroundColor: Color(0xFF42A5F5),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
     ),
     switchTheme: SwitchThemeData(
-      trackColor: WidgetStateProperty.resolveWith<Color?>(
-          (Set<WidgetState> states) {
+      trackColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.selected)) {
-          return Colors.blueAccent.shade400;
+          return Color(0xFF90CAF9);
         }
         return Colors.grey.shade300;
       }),
-      thumbColor: WidgetStateProperty.resolveWith<Color?>(
-          (Set<WidgetState> states) {
+      thumbColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.selected)) {
-          return Colors.white;
+          return Color(0xFF42A5F5);
         }
         return Colors.white;
       }),
     ),
     sliderTheme: SliderThemeData(
-      activeTrackColor: Colors.blueAccent,
-      inactiveTrackColor: Colors.blue.shade100,
-      thumbColor: Colors.blueAccent,
-      overlayColor: Colors.blueAccent.withOpacity(0.2),
-      valueIndicatorColor: Colors.blueAccent,
+      activeTrackColor: Color(0xFF42A5F5),
+      inactiveTrackColor: Color(0xFF90CAF9),
+      thumbColor: Color(0xFF42A5F5),
+      overlayColor: Color(0xFF42A5F5).withOpacity(0.2),
+      valueIndicatorColor: Color(0xFF42A5F5),
       valueIndicatorTextStyle: GoogleFonts.poppins(color: Colors.white),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey.shade300),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey.shade300),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blueAccent, width: 2),
-      ),
-      labelStyle: GoogleFonts.poppins(color: Colors.grey[600]),
-      hintStyle: GoogleFonts.poppins(color: Colors.grey[400]),
-      prefixIconColor: Colors.grey[600],
     ),
   );
 

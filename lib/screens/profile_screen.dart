@@ -49,12 +49,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: Text(
           'Profile',
-          style: textTheme.headlineSmall?.copyWith(color: colorScheme.onSurface),
+          style: textTheme.headlineSmall?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSurfaceVariant),
+          icon: Icon(Icons.arrow_back_ios, color: colorScheme.primary),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -87,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundColor: colorScheme.surface,
+                      backgroundColor: colorScheme.background,
                       child: Icon(
                         Icons.person,
                         size: 50,
@@ -100,6 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _userName,
                     style: textTheme.headlineMedium?.copyWith(
                       color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
@@ -114,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Content Section
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -125,7 +126,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     colorScheme.error,
                   ),
                   const SizedBox(height: 12),
-                  _buildCard(
+                  Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    margin: EdgeInsets.zero,
+                    color: colorScheme.surface,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -134,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               'Emergency Contacts',
-                              style: textTheme.titleMedium,
+                                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
                             ),
                             IconButton(
                               icon: Icon(
@@ -159,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color: colorScheme.errorContainer,
-                                    borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(Icons.phone, color: colorScheme.onError, size: 20),
                                 ),
@@ -170,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     children: [
                                       Text(
                                         contact['name']!,
-                                        style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                                        style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, color: colorScheme.onSurface),
                                       ),
                                       Text(
                                         '${contact['relation']!} • ${contact['phone']!}',
@@ -186,6 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _buildAddButton('Add Emergency Contact', context),
                         ],
                       ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -197,33 +207,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     colorScheme.secondary,
                   ),
                   const SizedBox(height: 12),
-                  _buildCard(
+                  Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    margin: EdgeInsets.zero,
+                    color: colorScheme.surface,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ..._healthConditions.map((condition) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
+                            padding: const EdgeInsets.only(bottom: 10.0),
                           child: Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.secondaryContainer,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(Icons.medical_services_outlined, color: colorScheme.onSecondary, size: 20),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                condition,
-                                style: textTheme.bodyMedium,
+                                Icon(Icons.check_circle, color: colorScheme.primary, size: 20),
+                                const SizedBox(width: 10),
+                                Text(
+                                  condition,
+                                  style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, color: colorScheme.onSurface),
                               ),
                             ],
                           ),
-                        )).toList(),
+                          )),
                         const SizedBox(height: 8),
                         _buildAddButton('Add Health Condition', context),
                       ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -232,120 +244,101 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSectionHeader(
                     'Medication Preferences',
                     Icons.medication_outlined,
-                    colorScheme.tertiary,
+                    colorScheme.primary,
                   ),
                   const SizedBox(height: 12),
-                  _buildCard(
-                    child: Column(
-                      children: _medicationPreferences.entries.map((preference) => SwitchListTile(
-                        title: Text(
-                          preference.key,
-                          style: textTheme.bodyMedium,
-                        ),
-                        value: preference.value,
-                        onChanged: (bool value) {
-                          setState(() {
-                            _medicationPreferences[preference.key] = value;
-                          });
-                        },
-                        activeColor: colorScheme.tertiary,
-                        secondary: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: colorScheme.tertiaryContainer,
-                            borderRadius: BorderRadius.circular(8),
+                  Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    margin: EdgeInsets.zero,
+                    color: colorScheme.surface,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ..._medicationPreferences.entries.map((entry) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  entry.value ? Icons.check_box : Icons.check_box_outline_blank,
+                                  color: entry.value ? colorScheme.primary : colorScheme.outlineVariant,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  entry.key,
+                                  style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, color: colorScheme.onSurface),
+                                ),
+                              ],
+                            ),
+                          )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Language & Notification Settings
+                  _buildSectionHeader(
+                    'Settings',
+                    Icons.settings,
+                    colorScheme.secondary,
+                  ),
+                  const SizedBox(height: 12),
+                  Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    margin: EdgeInsets.zero,
+                    color: colorScheme.surface,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Language', style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, color: colorScheme.onSurface)),
+                              DropdownButton<String>(
+                                value: _selectedLanguage,
+                                items: <String>['English', 'Spanish', 'French', 'Hindi', 'Gujarati', 'Marathi']
+                                    .map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selectedLanguage = newValue!;
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                          child: Icon(Icons.settings_outlined, color: colorScheme.onTertiary, size: 20),
-                        ),
-                      )).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Language Preference
-                  _buildSectionHeader(
-                    'Language Preference',
-                    Icons.translate_outlined,
-                    colorScheme.primary,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildCard(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: colorScheme.outline),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _selectedLanguage,
-                          isExpanded: true,
-                          items: ['English', 'Hindi', 'Gujarati']
-                              .map((language) => DropdownMenuItem(
-                                    value: language,
-                                    child: Text(language, style: textTheme.bodyMedium), // Ensure text theme
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedLanguage = value!;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Notification Toggle
-                  _buildSectionHeader(
-                    'Notifications',
-                    Icons.notifications_outlined,
-                    colorScheme.primary,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildCard(
-                    child: SwitchListTile(
-                      title: Text(
-                        'Enable Notifications',
-                        style: textTheme.bodyMedium,
-                      ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Notifications', style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, color: colorScheme.onSurface)),
+                              Switch(
                       value: _notificationsEnabled,
-                      onChanged: (value) {
+                                onChanged: (bool value) {
                         setState(() {
                           _notificationsEnabled = value;
                         });
                       },
                       activeColor: colorScheme.primary,
-                      secondary: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(Icons.notifications_outlined, color: colorScheme.onPrimary, size: 20),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-
-                  // Logout Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/auth_gateway');
-                      },
-                      icon: Icon(Icons.logout, color: colorScheme.onError),
-                      label: Text(
-                        'Logout',
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colorScheme.onError,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.error,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),

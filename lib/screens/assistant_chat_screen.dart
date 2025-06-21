@@ -12,13 +12,14 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
   final TextEditingController _textInputController = TextEditingController();
   final List<Map<String, String>> _messages = [];
   bool _isRecording = false; // For voice input
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   // FlutterTts flutterTts = FlutterTts(); // Uncomment for actual TTS
 
   @override
   void initState() {
     super.initState();
     // _initTts(); // Uncomment for actual TTS
-    _addAssistantMessage('Hello! How can I help you today?');
+     _addAssistantMessage('Hello! How can I help you today?'); // Remove initial chat bubble
     _textInputController.addListener(_onTextInputChanged);
   }
 
@@ -116,31 +117,31 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: Text(
           'Assistant Chat',
-          style: textTheme.headlineSmall?.copyWith(color: colorScheme.onSurface),
+          style: textTheme.headlineSmall?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSurface),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        automaticallyImplyLeading: false,
+        leading: null,
         actions: [
           IconButton(
-            icon: Icon(Icons.history, color: colorScheme.onSurface),
+            icon: Icon(Icons.menu, color: colorScheme.primary),
+            tooltip: 'Chat History',
             onPressed: () {
-              Scaffold.of(context).openEndDrawer();
+              _scaffoldKey.currentState?.openDrawer();
             },
           ),
         ],
       ),
-      endDrawer: Drawer(
+      drawer: Drawer(
         child: Column(
           children: [
             DrawerHeader(
@@ -174,8 +175,6 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
                       color: isUser ? colorScheme.primary : colorScheme.onSurface,
                     ),
                     onTap: () {
-                      // Optionally, tapping a history item could load it into the main chat
-                      // For now, we just close the drawer.
                       Navigator.pop(context);
                     },
                   );
@@ -185,88 +184,136 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                final isUser = message['sender'] == 'user';
-                return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                    decoration: BoxDecoration(
-                      color: isUser ? colorScheme.primaryContainer : colorScheme.surfaceVariant,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          message['text']!,
-                          style: textTheme.bodyLarge?.copyWith(
-                            color: isUser ? colorScheme.onPrimaryContainer : colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Card(
+          elevation: 12,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+          color: isDark ? colorScheme.surface : Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+            child: Column(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _textInputController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      hintStyle: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.6)),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: colorScheme.outline),
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      final message = _messages[index];
+                      final isUser = message['sender'] == 'user';
+                      return Align(
+                        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 6.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+                          decoration: BoxDecoration(
+                            color: isUser
+                                ? (isDark ? colorScheme.primary.withOpacity(0.22) : colorScheme.primary.withOpacity(0.15))
+                                : (isDark ? colorScheme.surfaceVariant : Colors.grey[100]),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                              bottomLeft: Radius.circular(isUser ? 20 : 4),
+                              bottomRight: Radius.circular(isUser ? 4 : 20),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            message['text']!,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: isUser
+                                  ? colorScheme.primary
+                                  : (isDark ? Colors.white : colorScheme.onSurface),
+                              fontWeight: isUser ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    // Mic, file, and image buttons
+                    Material(
+                      color: Colors.transparent,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(_isRecording ? Icons.mic : Icons.mic_none, color: colorScheme.primary),
+                            tooltip: 'Voice Input',
+                            onPressed: _handleVoiceInput,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.attach_file, color: colorScheme.primary),
+                            tooltip: 'Attach File',
+                            onPressed: () {
+                              // TODO: Implement file picker
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.image, color: colorScheme.primary),
+                            tooltip: 'Attach Image',
+                            onPressed: () {
+                              // TODO: Implement image picker
+                            },
+                          ),
+                        ],
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.7)),
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: _textInputController,
+                        decoration: InputDecoration(
+                          hintText: 'Type your message...',
+                          filled: true,
+                          fillColor: isDark ? colorScheme.surfaceVariant : Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide(color: colorScheme.primary.withOpacity(0.2)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide(color: colorScheme.primary.withOpacity(0.2)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                          ),
+                        ),
+                        style: textTheme.bodyLarge?.copyWith(color: isDark ? Colors.white : null),
+                        onSubmitted: (_) => _handleSendOrVoiceInput(),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: colorScheme.primary, width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      prefixIcon: IconButton(
-                        icon: Icon(Icons.attach_file, color: colorScheme.primary),
-                        onPressed: () {
-                          // TODO: Implement image file selection logic
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Image selection not yet implemented.')),
-                          );
-                        },
-                      ),
-                      suffixIcon: IconButton(
+                    ),
+                    const SizedBox(width: 10),
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: colorScheme.primary,
+                      child: IconButton(
                         icon: Icon(
-                          _textInputController.text.isNotEmpty ? Icons.send : Icons.mic,
-                          color: colorScheme.primary,
+                          _textInputController.text.isNotEmpty ? Icons.send : Icons.send,
+                          color: Colors.white,
                         ),
                         onPressed: _handleSendOrVoiceInput,
                       ),
                     ),
-                    style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
-                    onSubmitted: (_) => _handleSendOrVoiceInput(), // Send on enter
-                  ),
+                  ],
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -126,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     height: 180,
                     decoration: BoxDecoration(
                       color: colorScheme.surface,
-                      shape: BoxShape.circle,
+                      shape: BoxShape.rectangle,
                       boxShadow: [
                         BoxShadow(
                           color: colorScheme.primary.withOpacity(0.2),
@@ -136,10 +136,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ],
                     ),
                     child: Center(
-                      child: SvgPicture.asset(
-                        'assets/images/app_logo.svg',
-                        width: 140,
-                        height: 140,
+                      child: Image.asset(
+                        'assets/images/my_onsite_healthcare_logo.jpeg',
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
