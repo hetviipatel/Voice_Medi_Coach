@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voice_medication_coach/screens/rewards_screen.dart';
+import 'package:voice_medication_coach/services/user_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,8 +10,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // TODO: Replace with actual user name, perhaps fetched from an authentication service
-  final String _userName = 'Hetvi'; 
+  late UserService _userService;
+
+  @override
+  void initState() {
+    super.initState();
+    _userService = UserService();
+    _userService.addListener(_onUserServiceChanged);
+  }
+
+  @override
+  void dispose() {
+    _userService.removeListener(_onUserServiceChanged);
+    super.dispose();
+  }
+
+  void _onUserServiceChanged() {
+    setState(() {
+      // Rebuild the UI when user service changes
+    });
+  }
 
   // Mock data for Daily Health Summary - replace with actual data
   final int _medsTakenToday = 2;
@@ -45,11 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -72,6 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
+          // Health Worker Panel Button (for Health Workers only)
+          if (_userService.isHealthWorker) // Only show for health workers
+            IconButton(
+              icon: Icon(Icons.medical_services, color: colorScheme.primary),
+              onPressed: () {
+                Navigator.pushNamed(context, '/health_worker_panel');
+              },
+            ),
           IconButton(
             icon: Icon(Icons.settings, color: colorScheme.primary),
             onPressed: () {
@@ -87,19 +109,31 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome Message
-              Text(
-                'Welcome to MediWell!',
-                style: textTheme.headlineMedium?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Your daily health companion',
-                style: textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome to MediWell!',
+                          style: textTheme.headlineMedium?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Your daily health companion',
+                          style: textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 18),
 
@@ -504,10 +538,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              label,
-              style: textTheme.bodyMedium?.copyWith(
-                color: brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+            Flexible(
+              child: Text(
+                label,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -717,10 +756,15 @@ class _SummaryGridCardState extends State<_SummaryGridCard> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    widget.label,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+                  Flexible(
+                    child: Text(
+                      widget.label,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],

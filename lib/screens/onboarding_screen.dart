@@ -164,9 +164,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         const SizedBox(height: 20),
                         // Consent Form Placeholder
                         CheckboxListTile(
-                          title: Text(
+                          title: Flexible(
+                            child: Text(
                             'I agree to voice input, data storage, and notifications.',
                             style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
                           ),
                           value: false, // TODO: Manage consent state
                           onChanged: (bool? newValue) {
@@ -315,6 +319,7 @@ class OnboardingPage extends StatelessWidget {
                     style: textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurfaceVariant, // Use theme onSurfaceVariant color
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                 ),
               ],

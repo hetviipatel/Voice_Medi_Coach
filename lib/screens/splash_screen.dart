@@ -43,7 +43,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       setState(() => _statusMessage = 'Checking internet connection...');
       final connectivityResult = await Connectivity().checkConnectivity();
       if (connectivityResult == ConnectivityResult.none) {
-        throw Exception('No internet connection');
+        // Don't throw exception, just show warning
+        setState(() => _statusMessage = 'No internet connection - some features may be limited');
+        await Future.delayed(const Duration(seconds: 2));
       }
 
       // Check microphone permission
@@ -52,19 +54,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (!micStatus.isGranted) {
         await Permission.microphone.request();
         if (!(await Permission.microphone.status).isGranted) {
-          throw Exception('Microphone permission required');
-        }
-      }
-
-      // Check storage permission only on non-web platforms
-      if (!kIsWeb) {
-        setState(() => _statusMessage = 'Checking storage permission...');
-        final storageStatus = await Permission.storage.status;
-        if (!storageStatus.isGranted) {
-          await Permission.storage.request();
-          if (!(await Permission.storage.status).isGranted) {
-            throw Exception('Storage permission required');
-          }
+          // Don't throw exception, just show warning
+          setState(() => _statusMessage = 'Microphone permission recommended for voice features');
+          await Future.delayed(const Duration(seconds: 2));
         }
       }
 
@@ -74,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       });
 
       // Navigate to next screen after successful checks
-      Timer(const Duration(seconds: 5), () {
+      Timer(const Duration(seconds: 2), () {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const OnboardingScreen()),
@@ -83,7 +75,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     } catch (e) {
       setState(() {
         _hasError = true;
-        _statusMessage = e.toString();
+        _statusMessage = 'Error: ${e.toString()}';
+      });
+      
+      // Still navigate to next screen even if there are permission issues
+      Timer(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        );
       });
     }
   }
@@ -138,8 +138,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     child: Center(
                       child: Image.asset(
                         'assets/images/my_onsite_healthcare_logo.jpeg',
-                        width: 200,
-                        height: 200,
+                        width: 160,
+                        height: 160,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -150,11 +150,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 // App Title
                 FadeTransition(
                   opacity: _animation,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Voice Medication Coach',
                     style: textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: colorScheme.primary,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -163,10 +167,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 // Tagline
                 FadeTransition(
                   opacity: _animation,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Your Personal Health Assistant',
                     style: textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -177,6 +185,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   duration: const Duration(milliseconds: 300),
                   child: Container(
                     key: ValueKey(_statusMessage),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
                       color: _hasError ? colorScheme.errorContainer : colorScheme.primaryContainer,
@@ -203,10 +212,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                             size: 20,
                           ),
                         const SizedBox(width: 10),
-                        Text(
+                        Flexible(
+                          child: Text(
                           _statusMessage,
                           style: textTheme.bodyMedium?.copyWith(
                             color: _hasError ? colorScheme.onErrorContainer : colorScheme.onPrimaryContainer,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

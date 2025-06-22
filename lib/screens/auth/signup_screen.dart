@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:voice_medication_coach/services/user_service.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -17,10 +18,18 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _professionalIdController = TextEditingController(); // New field for Health Worker
   final TextEditingController _specializationController = TextEditingController(); // New field for Health Worker
+  final TextEditingController _referralTokenController = TextEditingController(); // New field for referral token
 
   String _selectedRole = 'User'; // Default role
   bool _obscurePassword = true; // For password visibility toggle
   bool _obscureConfirmPassword = true; // For confirm password visibility toggle
+  late UserService _userService;
+
+  @override
+  void initState() {
+    super.initState();
+    _userService = UserService();
+  }
 
   @override
   void dispose() {
@@ -30,6 +39,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _confirmPasswordController.dispose();
     _professionalIdController.dispose();
     _specializationController.dispose();
+    _referralTokenController.dispose();
     super.dispose();
   }
 
@@ -174,6 +184,30 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                         ),
                         const SizedBox(height: 20),
+                        // Referral Token field for Users
+                        if (_selectedRole == 'User') ...[
+                          TextFormField(
+                            controller: _referralTokenController,
+                            decoration: InputDecoration(
+                              labelText: 'Referral Token (Required)',
+                              hintText: 'Enter the token provided by your health worker',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              prefixIcon: const Icon(Icons.qr_code),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Referral token is required for registration';
+                              }
+                              if (value.length < 6) {
+                                return 'Please enter a valid referral token';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                         // Conditional fields for Health Worker
                         if (_selectedRole == 'Health Worker') ...[
                           TextFormField(
@@ -281,7 +315,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                // TODO: Implement sign up logic
+                                // Sign up with proper role-based authentication
+                                _userService.login(_selectedRole, _nameController.text);
+                                Navigator.pushReplacementNamed(context, '/home');
                               }
                             },
                             style: ElevatedButton.styleFrom(

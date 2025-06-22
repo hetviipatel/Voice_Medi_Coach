@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:voice_medication_coach/screens/summary_chart_screen.dart';
+import 'package:voice_medication_coach/services/user_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +16,13 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _otpController = TextEditingController();
   bool _isOtpSent = false;
   String _selectedRole = 'User'; // Default role
+  late UserService _userService;
+
+  @override
+  void initState() {
+    super.initState();
+    _userService = UserService();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,11 +166,9 @@ class LoginScreenState extends State<LoginScreen> {
                                 _isOtpSent = true;
                               });
                             } else {
-                              if (_selectedRole == 'User') {
-                                Navigator.pushReplacementNamed(context, '/home');
-                              } else {
-                                Navigator.pushReplacementNamed(context, '/dashboard');
-                              }
+                              // Login with proper role-based authentication
+                              _userService.login(_selectedRole, _phoneController.text);
+                              Navigator.pushReplacementNamed(context, '/home');
                             }
                           },
                           style: ElevatedButton.styleFrom(

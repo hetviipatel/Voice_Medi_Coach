@@ -15,6 +15,7 @@ import 'package:voice_medication_coach/screens/mood_tracker_screen.dart';
 import 'package:voice_medication_coach/theme/app_theme.dart';
 import 'package:voice_medication_coach/screens/summary_chart_screen.dart';
 import 'package:voice_medication_coach/screens/guidelines_screen.dart';
+import 'package:voice_medication_coach/screens/admin/admin_panel_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ class _MyAppState extends State<MyApp> {
             '/mood_tracker': (context) => const MoodTrackerScreen(),
             '/summary_chart': (context) => const SummaryChartScreen(),
             '/guidelines': (context) => const GuidelinesScreen(),
+            '/health_worker_panel': (context) => const AdminPanelScreen(),
           },
         );
       },
